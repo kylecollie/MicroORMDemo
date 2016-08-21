@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Data", "Data\Data.sqlproj", "{2BF55702-67AF-4A56-B568-717753AFC0A7}"
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "DataBase", "Data\DataBase.sqlproj", "{2BF55702-67AF-4A56-B568-717753AFC0A7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{52FCAF42-0AE9-4336-8EFA-15FA6F08424A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,5 +22,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2BF55702-67AF-4A56-B568-717753AFC0A7} = {52FCAF42-0AE9-4336-8EFA-15FA6F08424A}
 	EndGlobalSection
 EndGlobal
