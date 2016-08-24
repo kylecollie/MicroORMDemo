@@ -13,7 +13,12 @@ namespace DataLayer.Dapper
         private IDbConnection db = new SqlConnection("Data Source = ASUS_LAPTOP; Initial Catalog = DataBase; Integrated Security = True; Connect Timeout = 60; Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
         public Contact Add(Contact contact)
         {
-            throw new NotImplementedException();
+            var sql =
+                "INSERT INTO Contacts (FirstName, LastNAme, Email, Company, Title) VALUES (@FirstName, @LastName, @Email, @Company, @Title);" +
+                "SELECT CAST(SCOPE_IDENTITY() as int)";
+            var id = this.db.Query<int>(sql, contact).Single();
+            contact.Id = id;
+            return contact;
         }
 
         public Contact Find(int id)

@@ -34,6 +34,7 @@ namespace DataLayer.Tests
                 FirstName = "Joe",
                 LastName = "Blow",
                 Email = "joe.blow@ogmail.com",
+                Company = "Microsoft",
                 Title = "Developer"
             };
 
