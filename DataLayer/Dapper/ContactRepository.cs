@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Dapper;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using Dapper;
+using System.Transactions;
 
 namespace DataLayer.Dapper
 {
     public class ContactRepository : IContactRepository
     {
         private IDbConnection db = new SqlConnection("Data Source = ASUS_LAPTOP; Initial Catalog = DataBase; Integrated Security = True; Connect Timeout = 60; Encrypt=False;TrustServerCertificate=True;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+
         public Contact Add(Contact contact)
         {
             var sql =
@@ -23,7 +23,8 @@ namespace DataLayer.Dapper
 
         public Contact Find(int id)
         {
-            throw new NotImplementedException();
+            return this.db.Query<Contact>(
+                "SELECT * FROM Contacts WHERE Id = @Id", new { Id = id }).SingleOrDefault();
         }
 
         public List<Contact> GetAll()
@@ -33,22 +34,99 @@ namespace DataLayer.Dapper
 
         public Contact GetFullContact(int id)
         {
-            throw new NotImplementedException();
+            var sql =
+                "SELECT * FROM Contacts WHERE Id = @Id;" +
+                "SELECT * FROM Addresses WHERE ContactId = @Id";
+
+            using (var multipleResults = this.db.QueryMultiple(sql, new { Id = id }))
+            {
+                var contact = multipleResults.Read<Contact>().SingleOrDefault();
+
+                var addresses = multipleResults.Read<Address>().ToList();
+                if (contact != null && addresses != null)
+                {
+                    contact.Addresses.AddRange(addresses);
+                }
+
+                return contact;
+            }
         }
 
         public void Remove(int id)
         {
-            throw new NotImplementedException();
+            this.db.Execute("DELETE FROM Contacts WHERE Id = @Id", new { Id =  id });
         }
 
         public void Save(Contact contact)
         {
-            throw new NotImplementedException();
+            using (var txScope = new TransactionScope())
+            {
+                if (contact.IsNew)
+                {
+                    this.Add(contact);
+                }
+                else
+                {
+                    this.Update(contact);
+                }
+
+                foreach (var addr in contact.Addresses.Where(a => !a.IsDeleted))
+                {
+                    addr.ContactId = contact.Id;
+
+                    if (addr.IsNew)
+                    {
+                        this.Add(addr);
+                    }
+                    else
+                    {
+                        this.Update(addr);
+                    }
+                }
+
+                foreach (var addr in contact.Addresses.Where(a => a.IsDeleted))
+                {
+                    this.db.Execute("DELETE FROM Addresses WHERE Id = @Id", new { addr.Id });
+                }
+
+                txScope.Complete();
+            }
         }
 
         public Contact Update(Contact contact)
         {
-            throw new NotImplementedException();
+            var sql =
+                "UPDATE Contacts " +
+                "SET FirstName = @FirstName, " +
+                "    LastName = @LastName, " +
+                "    Email = @Email, " +
+                "    Company = @Company, " +
+                "    Title = @Title " +
+                "WHERE Id = @Id";
+            this.db.Execute(sql, contact);
+            return contact;
+        }
+
+        public Address Add(Address address)
+        {
+            var sql =
+                "INSERT INTO Addresses (ContactId, AddressType, StreetAddress, City, StateId, PostalCode) VALUES (@ContactId, @AddressType, @StreetAddress, @City, @StateId, @PostalCode);" +
+                "SELECT CAST(SCOPE_IDENTITY() as int)";
+            var id = this.db.Query<int>(sql, address).Single();
+            address.Id = id;
+            return address;
+        }
+
+        public Address Update(Address address)
+        {
+            this.db.Execute("UPDATE Addresses " +
+                "SET AddressType = @AddressType,  " +
+                "    StreetAddress = @StreetAddress, " +
+                "    City = @City, " +
+                "    StateId = @StateID, " +
+                "    PostalCode = @PostalCode " +
+                "WHERE Id = @Id", address);
+            return address;
         }
     }
 }

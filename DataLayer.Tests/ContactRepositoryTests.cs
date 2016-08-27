@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DataLayer;
 using FluentAssertions;
+using System.Linq;
 
 namespace DataLayer.Tests
 {
@@ -38,8 +39,20 @@ namespace DataLayer.Tests
                 Title = "Developer"
             };
 
+            Address address = new Address
+            {
+                AddressType = "Home",
+                StreetAddress = "123 Main Street",
+                City = "Baltimore",
+                StateId = 1,
+                PostalCode = "22222"
+            };
+
+            contact.Addresses.Add(address);
+
             // act
-            repository.Add(contact);
+            //repository.Add(contact);
+            repository.Save(contact);
 
             // assert
             contact.Id.Should().NotBe(0, "because identity should have been assigned by the DB");
@@ -54,7 +67,8 @@ namespace DataLayer.Tests
             IContactRepository repository = CreateRepository();
 
             // act
-            var contact = repository.Find(id);
+            //var contact = repository.Find(id);
+            var contact = repository.GetFullContact(id);
 
             // assert
             contact.Should().NotBeNull();
@@ -64,6 +78,9 @@ namespace DataLayer.Tests
             contact.Email.Should().Be("joe.blow@ogmail.com");
             contact.Company.Should().Be("Microsoft");
             contact.Title.Should().Be("Developer");
+
+            contact.Addresses.Count.Should().Be(1);
+            contact.Addresses.First().StreetAddress.Should().Be("123 Main Street");
         }
 
         [TestMethod]
@@ -73,16 +90,21 @@ namespace DataLayer.Tests
             IContactRepository repository = CreateRepository();
 
             // act
-            var contact = repository.Find(id);
+            //var contact = repository.Find(id);
+            var contact = repository.GetFullContact(id);
             contact.FirstName = "Bob";
-            repository.Update(contact);
+            contact.Addresses[0].StreetAddress = "456 Main Street";
+            //repository.Update(contact);
+            repository.Save(contact);
 
             // Create a new repository for verification purposes
             IContactRepository repository2 = CreateRepository();
-            var modifiedContact = repository2.Find(id);
+            //var modifiedContact = repository2.Find(id);
+            var modifiedContact = repository2.GetFullContact(id);
 
             // assert
             modifiedContact.FirstName.Should().Be("Bob");
+            modifiedContact.Addresses.First().StreetAddress.Should().Be("456 Main Street");
         }
 
         [TestMethod]

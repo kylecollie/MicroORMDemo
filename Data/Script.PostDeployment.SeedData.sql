@@ -66,12 +66,12 @@ VALUES ('Alabama'),
 
 /***** Seed data for Contacts table *****/
 
-INSERT INTO [Contacts] VALUES ('Michael', 'Jordan', 'michael@bulls.com', 'Chicago Bulls', 'Title');
+INSERT INTO [Contacts] VALUES ('Michael', 'Jordan', 'michael@bulls.com', 'Chicago Bulls', 'Air Jordan');
 INSERT INTO [Contacts] VALUES ('LaBron', 'James', 'lebron@heat.com', 'Miami Heat', 'King James');
-INSERT INTO [Contacts] VALUES ('Kobe', 'Bryant', 'kobe@lakers.com', 'Los Angeles Lakers', 'Title');
-INSERT INTO [Contacts] VALUES ('Kevin', 'Durant', 'kevin@thunder.com', 'OKC Thunder', 'Title');
-INSERT INTO [Contacts] VALUES ('Kyrie', 'Irving', 'kyrie@cavs.com', 'Cleveland Cavaliers', 'Title');
-INSERT INTO [Contacts] VALUES ('Chris', 'Paul', 'chris@clippers.com', 'Los Angeles Clippers', 'Title');
+INSERT INTO [Contacts] VALUES ('Kobe', 'Bryant', 'kobe@lakers.com', 'Los Angeles Lakers', 'Ocho');
+INSERT INTO [Contacts] VALUES ('Kevin', 'Durant', 'kevin@thunder.com', 'OKC Thunder', 'The Servant');
+INSERT INTO [Contacts] VALUES ('Kyrie', 'Irving', 'kyrie@cavs.com', 'Cleveland Cavaliers', 'Uncle Drew');
+INSERT INTO [Contacts] VALUES ('Chris', 'Paul', 'chris@clippers.com', 'Los Angeles Clippers', 'CP3');
 
 /***** Seed dta for Addresses table *****/
 
